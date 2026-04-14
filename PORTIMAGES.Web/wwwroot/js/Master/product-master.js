@@ -27,14 +27,16 @@ function bindDropdowns() {
    VALIDATION
 ================================*/
 function validateProduct() { 
+    debugger;
     if (!validateRequired("ddlClient_PM", ["", "-1"], "Client is required")) return false;
-    if (!validateRequired("ddlShip_PM", ["", "-1"], "Ship is required")) return false;
+    //if (!validateRequired("ddlShip_PM", ["", "-1"], "Ship is required")) return false;
     if (!validateRequired("ddlModel_PM", ["", "-1"], "Model is required")) return false;
-    if (!validateRequired("ddlInventoryStatus_PM", ["", "-1"], "Inventory Status is required")) return false;
-    if (!validateRequired("ddlVehicleStatus_PM", ["", "-1"], "Vehicle Status is required")) return false;
-    if (!validateRequired("ddlINSOrganization_PM", ["", "-1"], "INS Organization is required")) return false;
-    if (!validateRequired("ddlINSDestination_PM", ["", "-1"], "INS Destination is required")) return false;
-    if (!validateRequired("ddlINSStatus_PM", ["", "-1"], "INS Status is required")) return false;
+
+    //if (!validateRequired("ddlInventoryStatus_PM", ["", "-1"], "Inventory Status is required")) return false;
+    //if (!validateRequired("ddlVehicleStatus_PM", ["", "-1"], "Vehicle Status is required")) return false;
+    //if (!validateRequired("ddlINSOrganization_PM", ["", "-1"], "INS Organization is required")) return false;
+    //if (!validateRequired("ddlINSDestination_PM", ["", "-1"], "INS Destination is required")) return false;
+    //if (!validateRequired("ddlINSStatus_PM", ["", "-1"], "INS Status is required")) return false;
     if (!validateRequired("txtChassisNo_PM", ["", " "], "Chassis No is required")) return false;    
     return true;
 }
@@ -43,7 +45,8 @@ function validateProduct() {
    ADD / UPDATE
 ================================*/
 $(document).on("click", "#btnAddProduct", function () {
-    if (!validateProduct()) return;    
+    
+    if (!validateProduct()) return;        
     let encId = $("#hdnProductEncId").val(); 
     let payload = {
         ID: 0,
@@ -102,10 +105,8 @@ $(document).on("click", "#btnAddProduct", function () {
             ShowToast(type, title, res.message);
 
             if (res.status === 1) {
-                if (encId) {
-                    removeQueryString();
-                }
-                resetProductForm();
+                //if (encId) {removeQueryString();}
+                //resetProductForm();
             }
         }
     });
@@ -122,18 +123,17 @@ function loadProductForEdit(encId) {
         if (res.status !== 1) {
             ShowToast("error", "Error", res.message);
             return;
-        } 
-        const d = res.data;
-
+        }
+        const d = res.data; 
         // Dropdowns
-        $("#ddlClient_PM").val(d.clientId);
-        $("#ddlShip_PM").val(d.shipId);
-        $("#ddlModel_PM").val(d.modelId);
-        $("#ddlInventoryStatus_PM").val(d.inventoryStatusId);
-        $("#ddlVehicleStatus_PM").val(d.vehicleStatusId);
-        $("#ddlINSOrganization_PM").val(d.insOrganizationId);
-        $("#ddlINSDestination_PM").val(d.insDestinationId);
-        $("#ddlINSStatus_PM").val(d.insStatusId);
+        $("#ddlClient_PM").val(d.clientId == 0 ? -1 : d.clientId);
+        $("#ddlShip_PM").val(d.shipId == 0 ? -1 : d.shipId);
+        $("#ddlModel_PM").val(d.modelId == 0 ? -1 : d.modelId);
+        $("#ddlInventoryStatus_PM").val(d.inventoryStatusId == 0 ? -1 : d.inventoryStatusId);
+        $("#ddlVehicleStatus_PM").val(d.vehicleStatusId == 0 ? -1 : d.vehicleStatusId);
+        $("#ddlINSOrganization_PM").val(d.insOrganizationId == 0 ? -1 : d.insOrganizationId);
+        $("#ddlINSDestination_PM").val(d.insDestinationId == 0 ? -1 : d.insDestinationId);
+        $("#ddlINSStatus_PM").val(d.insStatusId == 0 ? -1 : d.insStatusId);
         $("#ddlInnerCargo_PM").val(d.innerCargo ? "1" : "0");
 
         // Text / Dates
@@ -157,8 +157,11 @@ function loadProductForEdit(encId) {
         $("#txtReasonFailure_PM").val(d.reasonFailure);
         $("#txtNotes_PM").val(d.notes);
 
-        $("#lblProductHeader").text("Edit Product");
-        $("#spnProduct").text("Edit Product");
+        //$("#lblProductHeader").text("Edit Product");
+        //$("#spnProduct").text("Edit Product");
+
+        $("#lblProductHeader").text("Add Product's Additional Info");
+        $("#spnProduct").text("Add Product's Additional Info");
         $("#btnAddProduct").text("Update");
     });
 }

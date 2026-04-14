@@ -22,6 +22,7 @@ namespace PORTIMAGES.Infrastructure.Repositories.Auth.AuthUser
         {
             try
             {
+                //string decryptedValue = CryptoHelper.Decrypt("388cw6sZc5qgjQuxIYMdJA");
                 string passwordHash = CryptoHelper.Encrypt(password);
                 var parameters = new DynamicParameters();
                 parameters.Add("@UserName", username);
