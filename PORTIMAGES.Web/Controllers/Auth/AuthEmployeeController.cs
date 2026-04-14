@@ -28,10 +28,12 @@ namespace PORTIMAGES.Web.Controllers.Auth
         [HttpPost]
         public async Task<IActionResult> Login(LoginCommand command)
         {
+
             if (!ModelState.IsValid)
             {
                 return View(command);
             }
+            await _authService.SignOutAsync("StaffScheme");
             var result = await _mediator.Send(command);
             if (result.Success)
             {

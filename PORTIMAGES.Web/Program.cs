@@ -55,7 +55,8 @@ app.UseAuthorization();
 
 app.MapGet("/", context =>
 {
-    context.Response.Redirect("/Login");
+    //context.Response.Redirect("/Login");
+    context.Response.Redirect("/StaffLogin");
     return Task.CompletedTask;
 });
 

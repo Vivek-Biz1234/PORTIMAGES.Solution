@@ -111,7 +111,7 @@
 
         $(document).on("click", "#btnAdd", function () {
 
-            if (validFiles.length === 0) {
+            if (validFiles.length === 0 && ($("#txtComponentName").val().trim() ==="")) {
                 ShowToast("warning", "Validation", "Please select valid images");
                 return;
             }
@@ -137,7 +137,7 @@
                 success: function (resp) {
 
                     if (resp.status === 1) {
-                        // validFiles = [];
+                         validFiles = [];
                         // $("#imagePreview .local").remove();
                         // loadSavedImages(encId);
 
@@ -186,7 +186,7 @@
                                                         <img src="${e.target.result}" class="file-preview" />
                                                         <div class="file-actions">
                                                             <button class="file-action delete local" type="button">
-                                                                <i class="ti ti-trash"></i>
+                                                                        <i class="ti ti-trash text-danger"></i>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -206,24 +206,25 @@
 
                 res.data.forEach(img => {
                     $("#imagePreview").append(`
-                                                <div class="col-md-3 mb-3 image-item saved" data-id="${img.imageId}">
-                                                    <div class="file-card">
-                                                        <img src="${img.imagePath}" class="file-preview" />
+                        <div class="col-md-3 mb-3 image-item saved" data-id="${img.imageId}">
+                            <label class="file-card">
+                                <input type="checkbox" class="custom-checkbox">
+                                <img src="${img.imagePath}" class="file-preview" />
 
-                                                        <div class="file-status">
-                                                            <div class="status-icon status-success">✓</div>
-                                                        </div>
+                                <div class="file-status">
+                                    <div class="status-icon status-success">✓</div>
+                                </div>
 
-                                                        <div class="file-actions">
-                                                            <button class="file-action delete saved"
-                                                                    type="button"
-                                                                    data-id="${img.imageId}">
-                                                                <i class="ti ti-trash"></i>
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `);
+                                <div class="file-actions">
+                                    <button class="file-action delete saved"
+                                            type="button"
+                                            data-id="${img.imageId}">
+                                                <i class="ti ti-trash text-danger"></i>
+                                    </button>
+                                </div>
+                            </label>
+                        </div>
+                    `);
                 });
             });
         }
@@ -267,7 +268,7 @@
 
 
                 const d = res.data[0];
-                alert(d.componentName);
+                // alert(d.componentName);
 
                 $("#txtComponentName").val(d.componentName);
                 $("#txtComponentWeight").val(d.componentWeight)

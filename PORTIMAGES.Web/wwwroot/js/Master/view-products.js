@@ -51,6 +51,7 @@ function renderTable() {
             </td>
             <td>${start + i + 1}</td>
             <td>${row.chassisNo}</td> 
+            <td>${row.invoicePrice}</td> 
             <td>${row.clientName}</td> 
             <td>${row.shipName}</td> 
             <td>${row.terminalName}</td> 

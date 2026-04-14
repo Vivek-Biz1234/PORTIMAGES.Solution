@@ -13,11 +13,13 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
     {
         private readonly IDapperRepository _dapper;
         private readonly ILogger<ProductRepository> _logger;
+        private readonly IProductFilesRepository _productFilesRepository;
 
-        public ProductRepository(IDapperRepository dapper,ILogger<ProductRepository> logger)
+        public ProductRepository(IDapperRepository dapper,ILogger<ProductRepository> logger, IProductFilesRepository productFilesRepository)
         {
             _dapper = dapper;
             _logger = logger;
+            _productFilesRepository = productFilesRepository;
         }
 
         #region ADD PRODUCT
@@ -28,6 +30,7 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
                 var param = new DynamicParameters();
 
                 param.Add("@ChassisNo", request.ChassisNo);
+                param.Add("@InvoicePrice", request.InvoicePrice);
                 param.Add("@ClientId", request.ClientId);
                 param.Add("@ShipId", request.ShipId);
                 param.Add("@ModelId", request.ModelId);
@@ -158,10 +161,13 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
                 param.Add("@ID", id);
                 param.Add("@DeletedBy", deletedBy);
                 param.Add("@Status", dbType: DbType.Int16, direction: ParameterDirection.Output);
-
                 await _dapper.ExecuteAsync("dbo.usp_delete_products",param,CommandType.StoredProcedure);
 
                 short result = param.Get<short?>("@Status") ?? -99;
+                if(result==1)
+                {
+                    await DeleteAllDetailsOfProduct(id, deletedBy);
+                }
 
                 return result switch
                 {
@@ -227,6 +233,29 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
                     -99,
                     "Something went wrong.<br/>Please contact support with Error ID: " + errorId
                 );
+            }
+        }
+        #endregion
+
+        #region Created By Vivek on 10-Apr-2026  
+        private async Task DeleteAllDetailsOfProduct(long productId ,int deletedBy)
+        {
+            try
+            {
+                var response = _productFilesRepository.GetProductImagesAsync(productId);
+                var images = response.Result.Data;
+                if(images.Count>0)
+                {
+                    for (int i = 0; i < images.Count; i++)
+                    {
+                        await _productFilesRepository.DeleteProductImageAsync(images[i].ImageId, deletedBy);
+                    }
+                }
+               await _productFilesRepository.DeleteProductComponentDetailsAsync(productId, deletedBy);
+            }
+            catch (Exception ex)
+            {
+                var errorId = Guid.NewGuid().ToString().Substring(0, 8); 
             }
         }
         #endregion

@@ -31,13 +31,10 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
         public async Task<ApiResponse<object>> AddProductImageAsync(UploadProductImageRequesDTO request)
         {
             try
-            {
-                if (request.Pimages == null || !request.Pimages.Any())
-                {
-                    return new ApiResponse<object>((short)ResultStatus.Failed, "No images selected for upload", null);
-                }
+            {                
                 int successCount = 0;
                 int failCount = 0;
+                int componentStatus = 0;
                 if (!string.IsNullOrEmpty(request.ComponentName) && request.ComponentWeight > 0 && !string.IsNullOrEmpty(request.WeightUnit))
                 {
                     var param = new DynamicParameters();
@@ -52,6 +49,15 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
                     await _dapper.ExecuteAsync("dbo.usp_add_product_inner_details", param, CommandType.StoredProcedure);
 
                     var status = (ResultStatus)(param.Get<short?>("@Status") ?? -99);
+                    componentStatus = (int)status;
+                }
+                if ((request.Pimages == null || !request.Pimages.Any()) && componentStatus>0)
+                {
+                    return new ApiResponse<object>((short)ResultStatus.Success, "Component details updated", null);
+                }
+                else if ((request.Pimages == null || !request.Pimages.Any()) && componentStatus != 1)
+                {
+                    return new ApiResponse<object>((short)ResultStatus.Failed, "No images selected for upload", null);
                 }
                 foreach (var image in request.Pimages)
                 {
@@ -171,6 +177,32 @@ namespace PORTIMAGES.Infrastructure.Repositories.Admin
             }
         }
 
+        #endregion
+
+        #region Created By Vivek on 10-Apr-2026 
+        public async Task<ApiResponse<object>> DeleteProductComponentDetailsAsync(long productID, int deletedBy)
+        {
+            try
+            {
+                var param = new DynamicParameters();
+                param.Add("@ProductID", productID);
+                param.Add("@DeletedBy", deletedBy);                
+                param.Add("@Status", dbType: DbType.Int16, direction: ParameterDirection.Output);
+
+                await _dapper.ExecuteAsync("dbo.usp_delete_product_component_details", param, CommandType.StoredProcedure);
+
+                var status = (ResultStatus)(param.Get<short?>("@Status") ?? -99);
+
+                if (status != ResultStatus.Success)
+                    return ApiResponseMapper.Map(status, "Product Component Details", CrudAction.Deleted); 
+
+                return ApiResponseMapper.Map(ResultStatus.Success, "Product Component Details", CrudAction.Deleted);
+            }
+            catch (Exception ex)
+            {
+                return ApiExceptionHandler.Handle<object>(ex, _logger, "DeleteProductComponentDetailsAsync");
+            }
+        }
         #endregion
     }
 }

@@ -36,32 +36,33 @@ namespace PORTIMAGES.Application.Products.DTOs
         public string InsStatus { get; set; }
 
         public string? InsDate { get; set; }
-         
+
         public string NFCNO { get; set; }
         public string REFNO { get; set; }
         public string YardInNo { get; set; }
         public string YardInPlace { get; set; }
-
+        
         public string? YardInDate { get; set; }
         public string? YardOutDate { get; set; }
-         
+
         public string? ScheduledShippingDate { get; set; }
         public string? ShippingDate { get; set; }
         public string VoyageNo { get; set; }
-         
+
         public int StoragePeriod { get; set; }
         public string ContainerNo { get; set; }
         public int? Mileage { get; set; }
         public string Location { get; set; }
-         
+
         public bool InnerCargo { get; set; }
         public string Notes { get; set; }
         public string ReasonFailure { get; set; }
-         
+
         public bool IsActive { get; set; }
         public string CreatedBy { get; set; }
         public string CreatedOn { get; set; }
         public string UpdatedBy { get; set; }
         public string? UpdatedOn { get; set; }
+        public decimal InvoicePrice { get; set; }
     }
 }
